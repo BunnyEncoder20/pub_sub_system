@@ -1,0 +1,83 @@
+version: "3.8"
+
+services:
+    # PostgreSQL Database
+    postgres:
+        image: postgres:15
+        container_name: pub_sub_postgres
+        env_file:
+            - .env
+        ports:
+            - "5433:5432"
+        volumes:
+            - postgres_data:/var/lib/postgresql/data
+        healthcheck:
+            test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-pub_sub_user}"]
+            interval: 30s
+            timeout: 10s
+            retries: 3
+
+    # RabbitMQ Message Broker
+    # rabbitmq:
+    #   image: rabbitmq:3-management
+    #   container_name: pub_sub_rabbitmq
+    #   environment:
+    #     RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-guest}
+    #     RABBITMQ_DEFAULT_PASS: ${RABBITMQ_PASSWORD:-guest}
+    #   ports:
+    #     - "5672:5672"      # AMQP port
+    #     - "15672:15672"    # Management UI
+    #   volumes:
+    #     - rabbitmq_data:/var/lib/rabbitmq
+    #   healthcheck:
+    #     test: ["CMD", "rabbitmq-diagnostics", "ping"]
+    #     interval: 30s
+    #     timeout: 10s
+    #     retries: 3
+
+    # # Collector App (FastAPI)
+    # collector_app:
+    #   build:
+    #     context: .
+    #     dockerfile: collector_app/Dockerfile
+    #   container_name: pub_sub_collector
+    #   environment:
+    #     - RABBITMQ_URL=amqp://${RABBITMQ_USER:-guest}:${RABBITMQ_PASSWORD:-guest}@rabbitmq:5672/
+    #     - LOG_LEVEL=${LOG_LEVEL:-INFO}
+    #   ports:
+    #     - "8001:8000"
+    #   depends_on:
+    #     rabbitmq:
+    #       condition: service_healthy
+    #   volumes:
+    #     - ./collector_app:/app
+    #   restart: unless-stopped
+
+    # # Consumer App (FastAPI + Background Consumer)
+    # consumer_app:
+    #   build:
+    #     context: .
+    #     dockerfile: consumer_app/Dockerfile
+    #   container_name: pub_sub_consumer
+    #   environment:
+    #     - DATABASE_URL=postgresql://${POSTGRES_USER:-pub_sub_user}:${POSTGRES_PASSWORD:-pub_sub_password}@postgres:5432/${POSTGRES_DB:-pub_sub_db}
+    #     - RABBITMQ_URL=amqp://${RABBITMQ_USER:-guest}:${RABBITMQ_PASSWORD:-guest}@rabbitmq:5672/
+    #     - LOG_LEVEL=${LOG_LEVEL:-INFO}
+    #   ports:
+    #     - "8002:8000"
+    #   depends_on:
+    #     postgres:
+    #       condition: service_healthy
+    #     rabbitmq:
+    #       condition: service_healthy
+    #   volumes:
+    #     - ./consumer_app:/app
+    #   restart: unless-stopped
+
+volumes:
+    postgres_data:
+    rabbitmq_data:
+
+networks:
+    default:
+        driver: bridge
