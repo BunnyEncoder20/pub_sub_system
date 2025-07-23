@@ -14,6 +14,96 @@ A microservice system consisting of two FastAPI applications connected via Rabbi
 └─────────────────┘    └─────────────────┘    └─────────────────┘    └─────────────────┘
 ```
 
+## Project Structure
+```zsh
+pub-sub-system/
+├── README.md
+├── docker-compose.yml
+├── .env.example
+├── .gitignore
+├── requirements.txt
+├── pyproject.toml
+├── Makefile
+├── scripts/
+│   ├── setup.sh
+│   ├── start-dev.sh
+│   └── test.sh
+├── shared/
+│   ├── __init__.py
+│   ├── models/
+│   │   ├── __init__.py
+│   │   ├── device.py
+│   │   └── message.py
+│   ├── schemas/
+│   │   ├── __init__.py
+│   │   └── device.py
+│   ├── rabbitmq/
+│   │   ├── __init__.py
+│   │   ├── connection.py
+│   │   └── publisher.py
+│   └── database/
+│       ├── __init__.py
+│       ├── connection.py
+│       └── base.py
+├── collector_app/
+│   ├── __init__.py
+│   ├── main.py
+│   ├── api/
+│   │   ├── __init__.py
+│   │   ├── v1/
+│   │   │   ├── __init__.py
+│   │   │   ├── endpoints/
+│   │   │   │   ├── __init__.py
+│   │   │   │   └── devices.py
+│   │   │   └── api.py
+│   │   └── deps.py
+│   ├── core/
+│   │   ├── __init__.py
+│   │   ├── config.py
+│   │   └── logging.py
+│   ├── services/
+│   │   ├── __init__.py
+│   │   └── device_service.py
+│   ├── Dockerfile
+│   └── requirements.txt
+├── consumer_app/
+│   ├── __init__.py
+│   ├── main.py
+│   ├── core/
+│   │   ├── __init__.py
+│   │   ├── config.py
+│   │   └── logging.py
+│   ├── services/
+│   │   ├── __init__.py
+│   │   ├── consumer_service.py
+│   │   └── database_service.py
+│   ├── repositories/
+│   │   ├── __init__.py
+│   │   └── device_repository.py
+│   ├── Dockerfile
+│   └── requirements.txt
+├── tests/
+│   ├── __init__.py
+│   ├── conftest.py
+│   ├── collector_app/
+│   │   ├── __init__.py
+│   │   └── test_devices.py
+│   ├── consumer_app/
+│   │   ├── __init__.py
+│   │   └── test_consumer.py
+│   └── shared/
+│       ├── __init__.py
+│       └── test_rabbitmq.py
+├── migrations/
+│   ├── __init__.py
+│   └── versions/
+└── monitoring/
+    ├── prometheus/
+    │   └── prometheus.yml
+    └── grafana/
+        └── dashboards/
+```
+
 ## Quick Start
 
 1. Copy environment file:
