@@ -1,13 +1,28 @@
 from logging.config import fileConfig
+import os
+import sys
 
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
 
 from alembic import context
 
+# Add the project root to Python path
+sys.path.insert(0, os.path.dirname(os.path.dirname(__file__)))
+
+# Import shared configuration and models
+from shared.config import shared_settings
+from shared.models.base import Base
+
+# Import all models to ensure they're registered with SQLAlchemy
+from shared.models import device, message
+
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
+
+# Override the database URL with our shared config
+config.set_main_option('sqlalchemy.url', shared_settings.database.database_url)
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
@@ -16,9 +31,7 @@ if config.config_file_name is not None:
 
 # add your model's MetaData object here
 # for 'autogenerate' support
-# from myapp import mymodel
-# target_metadata = mymodel.Base.metadata
-target_metadata = None
+target_metadata = Base.metadata
 
 # other values from the config, defined by the needs of env.py,
 # can be acquired:
