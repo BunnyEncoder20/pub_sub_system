@@ -66,4 +66,26 @@ docker-compose down
 
 # Rebuild and restart
 docker-compose up -d --build
+
+#------------------------------------------------
+# RabbitMQ (standalone) docker Image
+docker run -d --name rabbitmq-mgmt -p 5672:5672 -p 15672:15672 rabbitmq:3-management-alpine
+
+# Stop the container
+docker stop rabbitmq-mgmt
+
+# Start the container again
+docker start rabbitmq-mgmt
+
+# View logs
+docker logs rabbitmq-mgmt
+
+# Remove the container (when you're done)
+docker rm -f rabbitmq-mgmt
 ```
+
+---
+
+## RabbitMQ
+- Run the docker image for Rabbitmq (use cmd given above)
+- Management portal at: `http://localhost:15672`
