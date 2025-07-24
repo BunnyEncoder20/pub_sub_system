@@ -35,22 +35,37 @@ services:
             retries: 3
 
     # # Collector App (FastAPI)
-    # collector_app:
-    #   build:
-    #     context: .
-    #     dockerfile: collector_app/Dockerfile
-    #   container_name: pub_sub_collector
-    #   environment:
-    #     - RABBITMQ_URL=amqp://${RABBITMQ_USER:-guest}:${RABBITMQ_PASSWORD:-guest}@rabbitmq:5672/
-    #     - LOG_LEVEL=${LOG_LEVEL:-INFO}
-    #   ports:
-    #     - "8001:8000"
-    #   depends_on:
-    #     rabbitmq:
-    #       condition: service_healthy
-    #   volumes:
-    #     - ./collector_app:/app
-    #   restart: unless-stopped
+    collector_app:
+        # Tells to build starting from root of project (context)
+        # Builds the image baased on dockerfile at collector_app dir
+        build:
+            context: .
+            dockerfile: collector_app/Dockerfile
+
+        # container name for logs
+        container_name: pub_sub_collector
+
+        # rabbitmq_url tells this container how to connect to rabbitmq server
+        # log level controlls logging verbosity
+        environment:
+            - RABBITMQ_URL=amqp://${RABBITMQ_USER:-guest}:${RABBITMQ_PASSWORD:-guest}@rabbitmq:5672/
+            - LOG_LEVEL=${LOG_LEVEL:-INFO}
+
+        # maps container port 8000 to localhost port 8001
+        ports:
+            - "8001:8000"
+
+        # needs rabbitmq server running for ops
+        depends_on:
+            rabbitmq:
+                condition: service_healthy
+
+        # mounts (syncs) localhost ./collector_app to containers /app folder
+        volumes:
+            - ./collector_app:/app
+
+        # restarts the container automatically unless explicitly stops
+        restart: unless-stopped
 
     # # Consumer App (FastAPI + Background Consumer)
     # consumer_app:
