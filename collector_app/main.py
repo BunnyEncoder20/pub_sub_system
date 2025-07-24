@@ -30,5 +30,10 @@ app.add_middleware(
 async def root():
     return {"status_code": status.HTTP_200_OK , "msg": "Hello World. This is the Collector FastAPI App"}
 
+# health check endpoint for Docker
+@app.get("/health")
+async def health_check():
+    return {"status": "healthy", "service": "collector_app"}
+
 # include routers
 # app.include_router()  # TODO: Add router when available
