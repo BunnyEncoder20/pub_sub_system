@@ -2,13 +2,14 @@ from fastapi import FastAPI, status
 
 # routes
 
-
 # CORS middleware
 from fastapi.middleware.cors import CORSMiddleware
 
+# Utils: Start the logger
+from logger import setup_logging
+setup_logging()
 
 '''------------------------------------------------------------------'''
-
 
 # making FastAPI class instance
 app = FastAPI()
