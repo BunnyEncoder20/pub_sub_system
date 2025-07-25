@@ -37,3 +37,8 @@ async def health_check():
 
 # include routers
 # app.include_router()  # TODO: Add router when available
+
+# ▢ Build the Pydantic schemas
+# ▢ Build the SQLAlchemy models for Device and Location
+# ▢ Write the crud/ functions for DB interactions
+# ▢ Use the existing RabbitMQ publisher for create_location
