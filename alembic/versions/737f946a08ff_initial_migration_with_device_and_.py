@@ -47,6 +47,7 @@ def upgrade() -> None:
         sa.ForeignKeyConstraint(['device_id'], ['devices.id'], ),
         sa.PrimaryKeyConstraint('id')
     )
+
     op.create_index(op.f('ix_messages_id'), 'messages', ['id'], unique=False)
     # ### end Alembic commands ###
 
