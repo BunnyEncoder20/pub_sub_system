@@ -1,10 +1,10 @@
-import logging
+from logging import getLogger
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
 from shared.config import shared_settings
 
-logger = logging.getLogger(__name__)
+logger = getLogger(__name__)
 
 try:
     engine = create_engine(shared_settings.database.database_url)
