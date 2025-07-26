@@ -1,4 +1,4 @@
-from sqlalchemy import Column, String, Boolean, Text
+from sqlalchemy import Column, String, Boolean, Text, relationship
 from shared.models.base import BaseModel
 
 
@@ -10,6 +10,8 @@ class Device(BaseModel):
     status = Column(String(20), default="active")
     description = Column(Text, nullable=True)
     is_active = Column(Boolean, default=True)
+
+    locations = relationship("Location", back_populates="device", cascade="all, delete-orphan")
 
     def __repr__(self):
         return f"<Device(id={self.id}, name='{self.name}', type='{self.device_type}')>"
