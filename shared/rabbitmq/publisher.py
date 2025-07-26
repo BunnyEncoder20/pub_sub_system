@@ -2,7 +2,7 @@ import json
 import logging
 import pika
 from typing import Dict, Any
-from .connection import get_rabbitmq_connection
+from connection import get_rabbitmq_connection
 
 logger = logging.getLogger(__name__)
 
@@ -216,4 +216,3 @@ class RabbitMQPublisher:
     def __exit__(self, exc_type, exc_val, exc_tb):
         """Context manager exit."""
         self.disconnect()
-        

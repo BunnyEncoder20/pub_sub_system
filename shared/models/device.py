@@ -1,4 +1,5 @@
-from sqlalchemy import Column, String, Boolean, Text, relationship
+from sqlalchemy import Column, String, Boolean, Text
+from sqlalchemy.orm import relationship
 from shared.models.base import BaseModel
 
 
