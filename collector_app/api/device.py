@@ -4,9 +4,7 @@ from logger import get_logger
 from fastapi import APIRouter, Depends, status, HTTPException
 from typing import Optional, List
 
-from sqlalchemy import or_
 from sqlalchemy.orm import Session
-from sqlalchemy.sql.expression import func
 
 from shared.database.session import get_db
 from shared.models.device import Device
@@ -38,7 +36,7 @@ def create_device(device: DeviceCreate, db: Session = Depends(get_db)):
             description = device.description,
             is_active = device.is_active
         )
-        logger.info(f"Device ORM object created")
+        logger.info("Device ORM object created")
 
         db.add(new_device)
         db.commit()
@@ -75,8 +73,6 @@ def get_devices(device_id: Optional[str] = None, db: Session = Depends(get_db)):
     logger.info('get_device_requested', device_id=None)
     devices = db.query(Device).all()
     return devices
-
-
 
 @router.delete('/{device_id}')
 def delete_device(device_id: str, db: Session = Depends(get_db)):
