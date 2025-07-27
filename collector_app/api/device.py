@@ -1,6 +1,4 @@
 from starlette.status import HTTP_404_NOT_FOUND
-from collector_app.schemas import device
-from logger import get_logger
 from fastapi import APIRouter, Depends, status, HTTPException
 from typing import Optional, List
 
@@ -18,6 +16,7 @@ router = APIRouter(
     tags=["Device"]
 )
 
+from logger.logger import get_logger
 logger = get_logger(__name__)
 
 '''------------------------------ APIs ------------------------------'''
@@ -67,7 +66,7 @@ def get_devices(device_id: Optional[str] = None, db: Session = Depends(get_db)):
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail='Device not found')
 
         logger.info('device_found', device_id=found_device.id)
-        return list(found_device)
+        return [found_device]
 
 
     logger.info('get_device_requested', device_id=None)
@@ -86,7 +85,7 @@ def delete_device(device_id: str, db: Session = Depends(get_db)):
         logger.error('device_not_found', device_id=device_id)
         raise HTTPException(status_code=HTTP_404_NOT_FOUND, detail='Device not found')
 
-    db.delete(device)
+    db.delete(found_device)
     db.commit()
 
     logger.info('device_deleted', device_id=device_id)
