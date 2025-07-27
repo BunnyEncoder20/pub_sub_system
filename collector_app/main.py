@@ -1,6 +1,8 @@
 from fastapi import FastAPI, status
 
 # routes
+from api.device import router as device_router
+from api.location import router as location_router
 
 # CORS middleware
 from fastapi.middleware.cors import CORSMiddleware
@@ -37,9 +39,5 @@ async def health_check():
     return {"status": "healthy", "service": "collector_app"}
 
 # include routers
-# app.include_router()  # TODO: Add router when available
-
-# ▢ Build the Pydantic schemas
-# ▢ Build the SQLAlchemy models for Device and Location
-# ▢ Write the crud/ functions for DB interactions
-# ▢ Use the existing RabbitMQ publisher for create_location
+app.include_router(device_router)
+app.include_router(location_router)
