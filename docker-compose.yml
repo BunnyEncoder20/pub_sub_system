@@ -1,97 +1,55 @@
-# version: "3.8" # version is obsolete now
+# version: "3.8"    // depreciated
 
 services:
-    # PostgreSQL Database
+    collector_app:
+        build: ./collector_app
+        container_name: collector_app
+        env_file:
+            - ./collector_app/.env
+        ports:
+            - "8000:8000"
+        depends_on:
+            - rabbitmq
+        networks:
+            - micro_net
+
+    consumer_app:
+        build: ./consumer_app
+        container_name: consumer_app
+        env_file:
+            - ./consumer_app/.env
+        depends_on:
+            - rabbitmq
+            - postgres
+        networks:
+            - micro_net
+
     postgres:
         image: postgres:15
-        container_name: pub_sub_postgres
-        env_file:
-            - .env
-        ports:
-            - "5433:5432"
+        container_name: postgres_db
+        environment:
+            POSTGRES_USER: postgres
+            POSTGRES_PASSWORD: postgres
+            POSTGRES_DB: micro_db
         volumes:
-            - postgres_data:/var/lib/postgresql/data
-        healthcheck:
-            test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-pub_sub_user}"]
-            interval: 30s
-            timeout: 10s
-            retries: 3
+            - pg_data:/var/lib/postgresql/data
+        ports:
+            - "5432:5432"
+        networks:
+            - micro_net
 
-    # RabbitMQ Message Broker
     rabbitmq:
         image: rabbitmq:3-management
-        container_name: pub_sub_rabbitmq
-        # environment:
-        #     - .env
+        container_name: rabbitmq_broker
         ports:
-            - "5672:5672" # AMQP port
-            - "15672:15672" # Management UI
-        volumes:
-            - rabbitmq_data:/var/lib/rabbitmq
-        healthcheck:
-            test: ["CMD", "rabbitmq-diagnostics", "ping"]
-            interval: 30s
-            timeout: 10s
-            retries: 3
-
-    # # Collector App (FastAPI)
-    collector_app:
-        # Tells to build starting from root of project (context)
-        # Builds the image baased on dockerfile at collector_app dir
-        build:
-            context: .
-            dockerfile: collector_app/Dockerfile
-
-        # container name for logs
-        container_name: pub_sub_collector
-
-        # rabbitmq_url tells this container how to connect to rabbitmq server
-        # log level controlls logging verbosity
-        environment:
-            - RABBITMQ_URL=amqp://${RABBITMQ_USER:-guest}:${RABBITMQ_PASSWORD:-guest}@rabbitmq:5672/
-            - LOG_LEVEL=${LOG_LEVEL:-INFO}
-
-        # maps container port 8000 to localhost port 8001
-        ports:
-            - "8001:8000"
-
-        # needs rabbitmq server running for ops
-        depends_on:
-            rabbitmq:
-                condition: service_healthy
-
-        # mounts (syncs) localhost ./collector_app to containers /app folder
-        volumes:
-            - ./collector_app:/app
-
-        # restarts the container automatically unless explicitly stops
-        restart: unless-stopped
-
-    # # Consumer App (FastAPI + Background Consumer)
-    # consumer_app:
-    #   build:
-    #     context: .
-    #     dockerfile: consumer_app/Dockerfile
-    #   container_name: pub_sub_consumer
-    #   environment:
-    #     - DATABASE_URL=postgresql://${POSTGRES_USER:-pub_sub_user}:${POSTGRES_PASSWORD:-pub_sub_password}@postgres:5432/${POSTGRES_DB:-pub_sub_db}
-    #     - RABBITMQ_URL=amqp://${RABBITMQ_USER:-guest}:${RABBITMQ_PASSWORD:-guest}@rabbitmq:5672/
-    #     - LOG_LEVEL=${LOG_LEVEL:-INFO}
-    #   ports:
-    #     - "8002:8000"
-    #   depends_on:
-    #     postgres:
-    #       condition: service_healthy
-    #     rabbitmq:
-    #       condition: service_healthy
-    #   volumes:
-    #     - ./consumer_app:/app
-    #   restart: unless-stopped
+            - "5672:5672"
+            - "15672:15672"
+        networks:
+            - micro_net
 
 volumes:
-    postgres_data:
-    rabbitmq_data:
+    pg_data:
 
 networks:
-    default:
+    micro_net:
         driver: bridge
