@@ -1,4 +1,4 @@
-# version: "3.8"    // depreciated
+# version: "3.8"
 
 services:
     collector_app:
@@ -13,11 +13,11 @@ services:
         networks:
             - micro_net
 
-    consumer_app:
-        build: ./consumer_app
-        container_name: consumer_app
+    celery_worker:
+        build: ./celery_worker
+        container_name: celery_worker
         env_file:
-            - ./consumer_app/.env
+            - ./celery_worker/.env
         depends_on:
             - rabbitmq
             - postgres
@@ -34,7 +34,7 @@ services:
         volumes:
             - pg_data:/var/lib/postgresql/data
         ports:
-            - "5432:5432"
+            - "5433:5432"
         networks:
             - micro_net
 
