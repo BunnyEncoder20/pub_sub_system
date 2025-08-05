@@ -1,12 +1,9 @@
-import os
 from celery import Celery
-from dotenv import load_dotenv
-
-load_dotenv()
+from app.config import settings
 
 celery_app = Celery(
     "collector",
-    broker=os.getenv("CELERY_BROKER_URL"),
+    broker=settings.CELERY_BROKER_URL,
 )
 
 def send_task(data: dict):
