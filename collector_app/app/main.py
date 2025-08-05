@@ -1,9 +1,22 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
 from app.celery_client import send_task
+from app.db import get_db_session
+from app.models import DataItem
+from sqlalchemy.orm import Session
+from pydantic import BaseModel
+from app.config import settings
 
 app = FastAPI()
 
+class PublishData(BaseModel):
+    content: str
+
 @app.post("/publish")
-def publish(data: dict):
-    send_task(data)
+def publish(data: PublishData, session: Session = Depends(get_db_session)):
+    send_task(data.dict())
     return {"status": "task sent"}
+
+@app.get("/data")
+def get_data(session: Session = Depends(get_db_session)):
+    items = session.query(DataItem).all()
+    return items
