@@ -15,6 +15,7 @@ The services communicate with each other using RabbitMQ as a message broker.
 - DB: PostgreSQL
 - Worker: Celery Worker
 - Optional Monitoring: Flower (Web UI for Celery tasks)
+- Containerization & Infrastructure: Docker, Docker Compose, Kubernetes
 
 ## Project Architecture
 ```bash
