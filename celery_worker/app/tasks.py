@@ -1,6 +1,6 @@
 from celery import Celery
 from app.db import get_db_session
-from app.models import DataItem
+from app.models import DataItem, Location
 from app.config import settings
 
 celery_app = Celery(
@@ -16,3 +16,12 @@ def save_to_db(data: dict):
     session.commit()
     session.close()
     print("Saved to DB:", data)
+
+@celery_app.task(name="process_location")
+def process_location(location_data: dict):
+    session = get_db_session()
+    location = Location(**location_data)
+    session.add(location)
+    session.commit()
+    session.close()
+    print("Processed location:", location_data)
