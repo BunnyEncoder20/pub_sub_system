@@ -2,3 +2,5 @@ fastapi
 uvicorn
 celery
 python-dotenv
+pydantic
+pydantic-settings
