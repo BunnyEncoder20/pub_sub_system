@@ -4,3 +4,5 @@ celery
 python-dotenv
 pydantic
 pydantic-settings
+sqlalchemy
+psycopg2-binary
