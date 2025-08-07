@@ -5,8 +5,12 @@ from app.models import DataItem
 from sqlalchemy.orm import Session
 from pydantic import BaseModel
 from app.config import settings
+from app.routers import device, location
 
 app = FastAPI()
+
+app.include_router(device.router)
+app.include_router(location.router)
 
 class PublishData(BaseModel):
     content: str
