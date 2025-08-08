@@ -17,6 +17,12 @@ The services communicate with each other using RabbitMQ as a message broker.
 - Optional Monitoring: Flower (Web UI for Celery tasks)
 - Containerization & Infrastructure: Docker, Docker Compose, Kubernetes
 
+## Why Kubernetes ?
+- Several reasons, mainly:
+    1.	Real-world deployment simulation – Shows that can run and manage distributed services in a production-like setup.
+	2.	Scalability demo – Easily scale the Celery workers up/down with a single command (kubectl scale).
+	3.	Resilience – If a container crashes, K8s will restart it automatically.
+
 ## Project Architecture
 ```bash
 +------------------+
