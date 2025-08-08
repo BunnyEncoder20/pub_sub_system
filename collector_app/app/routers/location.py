@@ -14,14 +14,10 @@ def create_location_record(location: LocationCreate):
     send_task("process_location", payload=location.dict())
     return {"status": "Location record sent for processing"}
 
-@router.get("/location/last_locations", response_model=List[LocationSchema])
-def get_last_locations_of_devices(device_id: Optional[int] = None, session: Session = Depends(get_db_session)):
-    query = session.query(Location)
-    if device_id:
-        query = query.filter(Location.device_id == device_id)
+@router.get("/location/last_locations/{device_id}", response_model=List[LocationSchema])
+def get_last_locations_of_device(device_id: int, session: Session = Depends(get_db_session)):
     # This is a simplified approach. A more robust solution would involve subqueries or CTEs
     # to get the truly last location per device. For now, it gets all locations and relies on client-side filtering or a more complex query.
-    locations = query.order_by(Location.timestamp.desc()).all()
 
     # To get only the last location per device, we need to group by device_id and select the max timestamp.
     # This requires a more advanced SQLAlchemy query. For simplicity, returning all and letting the client filter
@@ -35,7 +31,16 @@ def get_last_locations_of_devices(device_id: Optional[int] = None, session: Sess
     #     (Location.device_id == subquery.c.device_id) &
     #     (Location.timestamp == subquery.c.max_timestamp)
     # ).all()
+    query = session.query(Location)
+    if device_id:
+        query = query.filter(Location.device_id == device_id)
 
+    locations = (
+        query
+        .order_by(Location.timestamp.desc())
+        .limit(3)  # only get last 3
+        .all()
+    )
     return locations
 
 @router.get("/location/history", response_model=List[LocationSchema])
