@@ -23,6 +23,6 @@ class Location(Base):
     device_id = Column(Integer, ForeignKey("devices.id"))
     latitude = Column(Float)
     longitude = Column(Float)
-    timestamp = Column(DateTime, default=datetime.utcnow)
+    timestamp = Column(DateTime, default=datetime.now)
 
     device = relationship("Device", back_populates="locations")
