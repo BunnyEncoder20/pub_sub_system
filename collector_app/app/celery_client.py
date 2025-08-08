@@ -6,5 +6,5 @@ celery_app = Celery(
     broker=settings.CELERY_BROKER_URL,
 )
 
-def send_task(data: dict):
-    celery_app.send_task("app.tasks.save_to_db", args=[data])
+def send_task(task_name, payload):
+    celery_app.send_task(task_name, args=[payload])
