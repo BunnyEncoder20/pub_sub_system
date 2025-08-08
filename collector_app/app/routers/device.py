@@ -26,7 +26,7 @@ def get_device(device_id: Optional[int] = None, session: Session = Depends(get_d
     devices = session.query(Device).all()
     return devices
 
-@router.delete("/device/{device_id}")
+@router.delete("/device/delete/{device_id}")
 def delete_device(device_id: int, session: Session = Depends(get_db_session)):
     device = session.query(Device).filter(Device.id == device_id).first()
     if not device:
